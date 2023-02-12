@@ -268,7 +268,7 @@ export class GameEngine {
   }
 
   private _clearDestroyedObjs() {
-    for (let l = 0, r = 0; r < this._gameObjects.length; l++) {
+    for (let l = 0, r = 0; r < this._gameObjects.length; r++) {
       if (!this._gameObjects[r].destroyed) {
         const temp = this._gameObjects[r];
         this._gameObjects[r] = this._gameObjects[l];
