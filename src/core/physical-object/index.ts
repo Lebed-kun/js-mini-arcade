@@ -6,5 +6,6 @@ export interface PhysicalObject {
   vx: number;
   vy: number;
   isStatic: boolean;
+  isGhost: boolean;
   gravity: number;
 }

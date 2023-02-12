@@ -148,7 +148,7 @@ export class GameEngine {
 
   private _applyForces() {
     for (const obj of this._gameObjects) {
-      if (obj.destroyed) {
+      if (obj.destroyed || obj.physicalObject.isStatic) {
         continue;
       }
 
@@ -164,7 +164,7 @@ export class GameEngine {
 
       const physObj = obj.physicalObject;
 
-      if (physObj.isStatic) {
+      if (physObj.isStatic || physObj.isGhost) {
         continue;
       }
 
@@ -177,11 +177,13 @@ export class GameEngine {
         const downCollPhys = downColl.physicalObject;
         const dY = (physObj.y0 + physObj.h) - downCollPhys.y0;
         
-        if (downCollPhys.isStatic) {
-          physObj.y0 -= dY;
-        } else {
-          physObj.y0 -= dY / 2;
-          downCollPhys.y0 += dY / 2;
+        if (!downCollPhys.isGhost) {
+          if (downCollPhys.isStatic) {
+            physObj.y0 -= dY;
+          } else {
+            physObj.y0 -= dY / 2;
+            downCollPhys.y0 += dY / 2;
+          }
         }
 
         obj.clearDownCollision();
@@ -192,11 +194,13 @@ export class GameEngine {
         const upCollPhys = upColl.physicalObject;
         const dY = (upCollPhys.y0 + upCollPhys.h) - physObj.y0;
         
-        if (upCollPhys.isStatic) {
-          physObj.y0 += dY;
-        } else {
-          physObj.y0 += dY / 2;
-          upCollPhys.y0 -= dY / 2;
+        if (!upCollPhys.isGhost) {
+          if (upCollPhys.isStatic) {
+            physObj.y0 += dY;
+          } else {
+            physObj.y0 += dY / 2;
+            upCollPhys.y0 -= dY / 2;
+          }
         }
 
         obj.clearUpCollision();
@@ -207,11 +211,13 @@ export class GameEngine {
         const leftCollPhys = leftColl.physicalObject;
         const dX = (leftCollPhys.x0 + leftCollPhys.w) - physObj.x0;
         
-        if (leftCollPhys.isStatic) {
-          physObj.x0 += dX;
-        } else {
-          physObj.x0 += dX / 2;
-          leftCollPhys.y0 -= dX / 2;
+        if (!leftCollPhys.isGhost) {
+          if (leftCollPhys.isStatic) {
+            physObj.x0 += dX;
+          } else {
+            physObj.x0 += dX / 2;
+            leftCollPhys.y0 -= dX / 2;
+          }
         }
 
         obj.clearLeftCollision();
@@ -222,11 +228,13 @@ export class GameEngine {
         const rightCollPhys = leftColl.physicalObject;
         const dX = (physObj.x0 + physObj.w) - rightCollPhys.x0;
         
-        if (rightCollPhys.isStatic) {
-          physObj.x0 -= dX;
-        } else {
-          physObj.x0 -= dX / 2;
-          rightCollPhys.y0 += dX / 2;
+        if (!rightCollPhys.isGhost) {
+          if (rightCollPhys.isStatic) {
+            physObj.x0 -= dX;
+          } else {
+            physObj.x0 -= dX / 2;
+            rightCollPhys.y0 += dX / 2;
+          }
         }
 
         obj.clearRightCollision();
