@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "lib": ["es2015", "DOM"],
+    "outDir": "./dist/",
+    "baseUrl": "./src",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es5",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "typeRoots": [
+      "../node_modules/@types"
+    ],
+    "paths": {
+      "@/*": ["./*"],
+      "@core": ["./core"],
+      "@core/*": ["./core/*"],
+    },
+    "esModuleInterop": true,
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.d.ts"
+  ]
+}
