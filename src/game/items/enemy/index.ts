@@ -1,7 +1,6 @@
 import { GameObject } from '@core/game-object';
 import { Sprite } from '@core/sprite';
-import { GRAVITY, GAME_OBJ_ID_ENEMY, GAME_OBJ_ID_BOX } from '@game/consts';
-import * as events from '@core/game-event';
+import { GRAVITY, GAME_OBJ_ID_ENEMY } from '@game/consts';
 
 const RESTORE_JUMP_VELOCITY = 10.33;
 const MOVE_VELOCITY = 10.33;
