@@ -301,8 +301,6 @@ export class GameEngine {
       obj.beforeUpdate();
     }
 
-    await this._waitResume();
-
     this._resolveEvents();
     for (const obj of this._gameObjects) {
       obj.onResolveEvents();
@@ -316,35 +314,25 @@ export class GameEngine {
       obj.onDetectCollisions();
     }
 
-    await this._waitResume();
-
     this._applyForces();
     for (const obj of this._gameObjects) {
       obj.onApplyForces();
     }
-
-    await this._waitResume();
 
     this._resolveCollisions();
     for (const obj of this._gameObjects) {
       obj.onResolveCollisions();
     }
 
-    await this._waitResume();
-
     this._render();
     for (const obj of this._gameObjects) {
       obj.onRender();
     }
 
-    await this._waitResume();
-
     this._clearDestroyedObjs();
     for (const obj of this._gameObjects) {
       obj.afterUpdate();
     }
-
-    await this._waitResume();
 
     window.requestAnimationFrame(
       async () => {
