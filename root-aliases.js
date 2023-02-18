@@ -1,20 +1,29 @@
 const path = require('path');
 
-const aliases = [
+const srcAliases = [
   "@",
   '@core',
   '@game',
 ];
 
-const generator = () => {
+const assetsAlias = '@assets';
+
+const srcGenerator = () => {
   const aliasesMap = {};
-  for (const a of aliases) {
+  for (const a of srcAliases) {
     aliasesMap[a] = path.resolve(`src/${a.replace('@', '')}`);
   }
 
   return aliasesMap;
 };
 
+const assetsGenerator = () => {
+  return {
+    [assetsAlias]: 'assets',
+  };
+};
+
 module.exports = {
-  aliases: generator(),
+  srcAliases: srcGenerator(),
+  assetsAliases: assetsGenerator(),
 };
