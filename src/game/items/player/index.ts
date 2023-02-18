@@ -24,7 +24,7 @@ export interface PlayerSprites {
 
 export interface PlayerOptions {
   requiredPills: number;
-  onPillCollect: () => void;
+  onPillCollect: (count: number) => void;
   onDoorHit: () => void;
   onDie: () => void;
 }
@@ -140,11 +140,15 @@ export class Player extends GameObject {
 
     if (attackCastedDir === 'l' && playerX <= (enemyX + enemyW)) {
       enemy.destroy();
+      this._state.pillsCollected += 10;
+      this._options.onPillCollect(10);
       return;
     }
 
     if (attackCastedDir === 'r' && (playerX + playerW) >= enemyX) {
       enemy.destroy();
+      this._state.pillsCollected += 10;
+      this._options.onPillCollect(10);
       return;
     }
 
@@ -187,7 +191,7 @@ export class Player extends GameObject {
 
   private _handlePillCollision(_pill: GameObject): void {
     this._state.pillsCollected++;
-    this._options.onPillCollect();
+    this._options.onPillCollect(1);
   }
 
   private _handlePillCollisions(): void {
