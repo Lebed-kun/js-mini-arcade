@@ -24,6 +24,7 @@ export interface PlayerSprites {
 
 export interface PlayerOptions {
   requiredPills: number;
+  onPillCollect: () => void;
   onDoorHit: () => void;
   onDie: () => void;
 }
@@ -186,6 +187,7 @@ export class Player extends GameObject {
 
   private _handlePillCollision(_pill: GameObject): void {
     this._state.pillsCollected++;
+    this._options.onPillCollect();
   }
 
   private _handlePillCollisions(): void {
