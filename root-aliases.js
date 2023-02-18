@@ -3,6 +3,7 @@ const path = require('path');
 const aliases = [
   "@",
   '@core',
+  '@game',
 ];
 
 const generator = () => {

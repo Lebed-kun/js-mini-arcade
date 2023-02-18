@@ -1,10 +1,9 @@
-import { BehavObject } from '@core/behav-object';
 import { PhysicalObject } from '@core/physical-object';
 import { Sprite } from '@core/sprite';
 import { GameEvent, GameEventsSubscriptions } from '@core/game-event';
 
 export abstract class GameObject {
-  protected _behavObj: BehavObject;
+  protected readonly _protoId: number;
   protected _physicalObj: PhysicalObject;
   protected _sprite: Sprite;
 
@@ -17,11 +16,11 @@ export abstract class GameObject {
   protected _destroyed: boolean;
 
   constructor(
-    behavObj: BehavObject,
+    protoId: number,
     physicalObj: PhysicalObject,
     sprite: Sprite,
   ) {
-    this._behavObj = behavObj;
+    this._protoId = protoId;
     this._physicalObj = physicalObj;
     this._sprite = sprite;
 
@@ -35,8 +34,8 @@ export abstract class GameObject {
     this._destroyed = false;
   }
 
-  public get behavObject(): BehavObject {
-    return this._behavObj;
+  public get protoId(): number {
+    return this._protoId;
   }
   public get physicalObject(): PhysicalObject {
     return this._physicalObj;
@@ -112,8 +111,8 @@ export abstract class GameObject {
 
   public abstract beforeUpdate(): void;
   public abstract onResolveEvents(): void;
-  public abstract onApplyForces(): void;
   public abstract onDetectCollisions(): void;
+  public abstract onApplyForces(): void;
   public abstract onResolveCollisions(): void;
   public abstract onRender(): void;
   public abstract afterUpdate(): void;

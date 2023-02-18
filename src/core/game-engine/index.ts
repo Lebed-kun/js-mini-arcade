@@ -139,10 +139,11 @@ export class GameEngine {
 
   private _applyGravityForce(obj: GameObject) {
     if (obj.downCollision) {
-      return;
+      obj.physicalObject.vy = 0;
+    } else {
+      obj.physicalObject.vy += obj.physicalObject.gravity * 0.67;
     }
 
-    obj.physicalObject.vy += obj.physicalObject.gravity * 0.33;
     obj.physicalObject.y0 += obj.physicalObject.vy;
   }
 
@@ -300,36 +301,50 @@ export class GameEngine {
       obj.beforeUpdate();
     }
 
+    await this._waitResume();
+
     this._resolveEvents();
     for (const obj of this._gameObjects) {
       obj.onResolveEvents();
       obj.clearEvents();
     }
 
+    await this._waitResume();
+
     this._detectCollisions();
     for (const obj of this._gameObjects) {
       obj.onDetectCollisions();
     }
+
+    await this._waitResume();
 
     this._applyForces();
     for (const obj of this._gameObjects) {
       obj.onApplyForces();
     }
 
+    await this._waitResume();
+
     this._resolveCollisions();
     for (const obj of this._gameObjects) {
       obj.onResolveCollisions();
     }
+
+    await this._waitResume();
 
     this._render();
     for (const obj of this._gameObjects) {
       obj.onRender();
     }
 
+    await this._waitResume();
+
     this._clearDestroyedObjs();
     for (const obj of this._gameObjects) {
       obj.afterUpdate();
     }
+
+    await this._waitResume();
 
     window.requestAnimationFrame(
       async () => {

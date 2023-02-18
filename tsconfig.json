@@ -16,6 +16,8 @@
       "@/*": ["./*"],
       "@core": ["./core"],
       "@core/*": ["./core/*"],
+      "@game": ["./game"],
+      "@game/*": ["./game/*"]
     },
     "esModuleInterop": true,
   },
