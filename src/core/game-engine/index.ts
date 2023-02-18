@@ -11,7 +11,7 @@ export class GameEngine {
   private _waitResume: () => Promise<void>;
   private _resume: () => void;
 
-  constructor(canvas: HTMLCanvasElement, objects: GameObject[]) {
+  constructor(canvas: HTMLCanvasElement, background: Background, objects: GameObject[]) {
     this._canvas = canvas;
     this._gameObjects = objects;
     this._gameEvents = new Array(objects.length * 64);
