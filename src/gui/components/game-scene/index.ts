@@ -18,7 +18,7 @@ export class GameScene {
     const canvas = document.createElement('canvas');
     canvas.className = 'game-scene';
     if (this._onClick) {
-      canvas.addEventListener('click', (e) => this._onClick(e));
+      canvas.addEventListener('click', this._onClick);
     }
 
     this._canvasEl = canvas;
@@ -27,6 +27,15 @@ export class GameScene {
 
   public getCanvas(): HTMLCanvasElement {
     return this._canvasEl;
+  }
+
+  public setClickHandler(onClick: () => void): void {
+    if (this._onClick) {
+      this._canvasEl.removeEventListener('click', this._onClick);
+    }
+
+    this._onClick = onClick;
+    this._canvasEl.addEventListener('click', this._onClick);
   }
 
   public unmount() {

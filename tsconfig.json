@@ -20,6 +20,8 @@
       "@game/*": ["./game/*"],
       "@assets": ["../assets"],
       "@assets/*": ["../assets/*"],
+      "@gui": ["./gui"],
+      "@gui/*": ["./gui/*"]
     },
     "esModuleInterop": true,
   },

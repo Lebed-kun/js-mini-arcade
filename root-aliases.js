@@ -4,6 +4,7 @@ const srcAliases = [
   "@",
   '@core',
   '@game',
+  "@gui",
 ];
 
 const assetsAlias = '@assets';
@@ -19,7 +20,7 @@ const srcGenerator = () => {
 
 const assetsGenerator = () => {
   return {
-    [assetsAlias]: 'assets',
+    [assetsAlias]: path.resolve('assets'),
   };
 };
 

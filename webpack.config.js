@@ -1,7 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const rootAliases = require('./root-aliases').aliases;
+const rootAliases = require('./root-aliases');
 
 module.exports = {
   mode: 'production',
@@ -42,7 +42,7 @@ module.exports = {
         ],
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
           {
             loader: 'file-loader',
@@ -54,7 +54,8 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
-      ...rootAliases,
+      ...rootAliases.srcAliases,
+      ...rootAliases.assetsAliases,
     },
   },
   plugins: [
