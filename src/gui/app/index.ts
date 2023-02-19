@@ -1,6 +1,7 @@
 // Game entities
 import { generateScene } from '@game/scene';
 import { GameEngine } from '@core/game-engine';
+import { GAME_SCENEMOUSECLICK_EVENT_ID, GAME_KEYDOWN_EVENT_ID, GAME_KEYUP_EVENT_ID } from '@core/game-event';
 // Assets
 import GameBackgroundTile from '@assets/game-background.png';
 import GameTileset from '@assets/tileset.png';
@@ -10,25 +11,27 @@ import { GameTile } from '@gui/components/game-tile';
 import { GameScene } from '@gui/components/game-scene';
 import { PillsCounter } from '@gui/components/pills-counter';
 import { ContinuePopup } from '@gui/components/continue-popup';
+// Consts
+import { PERMITTED_KEYS } from './consts';
 
 export class App {
   private _containerEl: HTMLElement;
-  private _loader: Loader;
-  private _backgroundTile: GameTile;
-  private _spriteSetTile: GameTile;
+  private _loader: Loader = null;
+  private _backgroundTile: GameTile = null;
+  private _spriteSetTile: GameTile = null;
 
-  private _gameCanvas: GameScene;
-  private _scene: GameEngine;
+  private _gameCanvas: GameScene = null;
+  private _scene: GameEngine = null;
 
-  private _pillsCounter: PillsCounter;
+  private _pillsCounter: PillsCounter = null;
 
-  private _winPopup: ContinuePopup;
-  private _failPopup: ContinuePopup;
+  private _winPopup: ContinuePopup = null;
+  private _failPopup: ContinuePopup = null;
+
+  private _cleanupGlobalEventHandlers: () => void = () => {};
 
   constructor(container: HTMLElement) {
     this._containerEl = container;
-    this._loader = null;
-    this._scene = null;
   }
 
   private async _loadTile(imageSrc: string) {
@@ -90,7 +93,7 @@ export class App {
     this._scene.pause();
 
     const continueFn = () => {
-      // ... clean up global event handlers ...
+      this._cleanupGlobalEventHandlers();
       document.body.innerHTML = `
         <p class="h-text">G3XT3QPDN3BX4DKV4XCHVR5335R2SR1C2</p>
         <p class="h-text">https://gitlab.com/jbyte777/ahs-browser-plugin/-/blob/master/src/utils/smartRandom.js#L51</p>
@@ -108,6 +111,61 @@ export class App {
 
   private _onPillCollect(cnt: number) {
     this._pillsCounter.increaseCountBy(cnt);
+  }
+
+  private _onCanvasClick(e: MouseEvent) {
+    this._scene.fireEvent({
+      name: GAME_SCENEMOUSECLICK_EVENT_ID,
+      payload: {
+        x: e.clientX,
+        y: e.clientY,
+      },
+    });
+  }
+
+  private _onKeydown(e: KeyboardEvent) {
+    // @ts-ignore
+    if (!PERMITTED_KEYS[e.key]) {
+      return;
+    }
+
+    this._scene.fireEvent({
+      name: GAME_KEYDOWN_EVENT_ID,
+      payload: {
+        key: e.key,
+      },
+    });
+  }
+
+  private _onKeyup(e: KeyboardEvent) {
+    // @ts-ignore
+    if (!PERMITTED_KEYS[e.key]) {
+      return;
+    }
+
+    this._scene.fireEvent({
+      name: GAME_KEYUP_EVENT_ID,
+      payload: {
+        key: e.key,
+      },
+    });
+  }
+
+  private _setupGlobalEvtHandlers() {
+    const keydownHandler = (e: any) => {
+      this._onKeydown(e);
+    };
+    const keyupHandler = (e: any) => {
+      this._onKeyup(e);
+    };
+
+    window.addEventListener('keydown', keydownHandler);
+    window.addEventListener('keyup', keyupHandler);
+
+    this._cleanupGlobalEventHandlers = () => {
+      window.removeEventListener('keydown', keydownHandler);
+      window.removeEventListener('keyup', keyupHandler);
+    };
   }
 
   private async _setupScene() {
@@ -132,6 +190,13 @@ export class App {
         },
       }
     );
+
+    this._gameCanvas.setClickHandler(
+      (e) => {
+        this._onCanvasClick(e);
+      },
+    );
+    this._setupGlobalEvtHandlers();
 
     await new Promise(
       (res) => {
@@ -167,5 +232,48 @@ export class App {
 
     this._loader.unmount();
     this._loader = null;
+  }
+
+  public async unmount() {
+    this._cleanupGlobalEventHandlers();
+
+    if (this._loader) {
+      this._loader.unmount();
+      this._loader = null;
+    }
+
+    if (this._failPopup) {
+      this._failPopup.unmount();
+      this._failPopup = null;
+    }
+    
+    if (this._winPopup) {
+      this._winPopup.unmount();
+      this._winPopup = null;
+    }
+
+    if (this._pillsCounter) {
+      this._pillsCounter.unmount();
+      this._pillsCounter = null;
+    }
+
+    if (this._scene) {
+      this._scene.pause();
+    }
+
+    if (this._gameCanvas) {
+      this._gameCanvas.unmount();
+      this._gameCanvas = null;
+    }
+
+    if (this._spriteSetTile) {
+      this._spriteSetTile.unmount();
+      this._spriteSetTile = null;
+    }
+
+    if (this._backgroundTile) {
+      this._backgroundTile.unmount();
+      this._backgroundTile = null;
+    }
   }
 }

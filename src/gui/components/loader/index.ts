@@ -38,7 +38,10 @@ export class Loader {
   }
 
   public unmount() {
-    this._loaderEl.remove();
+    if (this._loaderEl) {
+      this._loaderEl.remove();
+      this._loaderEl = null;
+    }
   }
 
   public updateText(text: string) {

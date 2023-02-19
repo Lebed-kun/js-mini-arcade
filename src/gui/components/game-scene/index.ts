@@ -29,7 +29,7 @@ export class GameScene {
     return this._canvasEl;
   }
 
-  public setClickHandler(onClick: () => void): void {
+  public setClickHandler(onClick: (e?: MouseEvent) => void): void {
     if (this._onClick) {
       this._canvasEl.removeEventListener('click', this._onClick);
     }
@@ -39,6 +39,9 @@ export class GameScene {
   }
 
   public unmount() {
-    this._canvasEl.remove();
+    if (this._canvasEl) {
+      this._canvasEl.remove();
+      this._canvasEl = null;
+    }
   }
 }

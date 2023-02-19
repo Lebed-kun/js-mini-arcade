@@ -33,6 +33,9 @@ export class GameTile {
   }
 
   public unmount() {
-    this._imageEl.remove();
+    if (this._imageEl) {
+      this._imageEl.remove();
+      this._imageEl = null;
+    }
   }
 }

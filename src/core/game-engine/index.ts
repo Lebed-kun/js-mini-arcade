@@ -13,6 +13,7 @@ export class GameEngine {
 
   constructor(canvas: HTMLCanvasElement, background: Background, objects: GameObject[]) {
     this._canvas = canvas;
+    this._background = background;
     this._gameObjects = objects;
     this._gameEvents = new Array(objects.length * 64);
 
@@ -306,8 +307,6 @@ export class GameEngine {
       obj.onResolveEvents();
       obj.clearEvents();
     }
-
-    await this._waitResume();
 
     this._detectCollisions();
     for (const obj of this._gameObjects) {

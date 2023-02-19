@@ -29,7 +29,10 @@ export class PillsCounter {
   }
 
   public unmount() {
-    this._counterEl.remove();
+    if (this._counterEl) {
+      this._counterEl.remove();
+      this._counterEl = null;
+    }
   }
 
   public increaseCountBy(cnt: number) {
