@@ -1,0 +1,34 @@
+.game-pills-counter {
+  width: 120px;
+  height: 48px;
+  
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 4px solid rgb(204, 170, 60);
+  background-color: rgb(65, 27, 16);
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+}
+
+.game-pills-counter > *:first-child {
+  margin-right: 8px;
+}
+
+.game-pills-counter__img {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.game-pills-counter__text {
+  font-family: "Pixel", monospace;
+  font-weight: 600;
+  font-size: 32px;
+  line-height: 40px;
+}

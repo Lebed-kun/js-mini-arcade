@@ -3,7 +3,7 @@ import './styles.css';
 
 export class GameTilesetTile {
   private _containerEl: HTMLElement;
-  private _imageEl: HTMLElement;
+  private _imageEl: HTMLImageElement;
 
   constructor(container: HTMLElement) {
     this._containerEl = container;
@@ -21,6 +21,10 @@ export class GameTilesetTile {
   }
 
   public getImage(): HTMLImageElement {
-    return this._imageEl as HTMLImageElement;
+    return this._imageEl;
+  }
+
+  public unmount() {
+    this._imageEl.remove();
   }
 }

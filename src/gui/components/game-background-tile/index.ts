@@ -23,4 +23,8 @@ export class GameBackgroundTile {
   public getImage(): HTMLImageElement {
     return this._imageEl as HTMLImageElement;
   }
+
+  public unmount() {
+    this._imageEl.remove();
+  }
 }
