@@ -1,4 +1,4 @@
-import HourGlassIcon from '@assets/hoursglass.svg';
+import HourGlassIcon from '@assets/hourglass.svg';
 import './styles.css';
 
 interface LoaderProps {
