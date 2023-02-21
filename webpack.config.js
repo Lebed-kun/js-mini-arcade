@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const rootAliases = require('./root-aliases');
 
 module.exports = {
@@ -37,7 +38,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-          "style-loader",
+          MiniCssExtractPlugin.loader,
           "css-loader"
         ],
       },
@@ -67,5 +68,17 @@ module.exports = {
     new TerserPlugin({
       parallel: true,
     }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      linkType: 'text/css',
+    }),
   ],
+  devServer: {
+    client: {
+      overlay: {
+        warnings: false,
+        errors: false,
+      },
+    },
+  },
 };

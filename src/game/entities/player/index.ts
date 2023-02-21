@@ -70,7 +70,9 @@ export class Player extends GameObject {
   public beforeUpdate(): void {}
   
   public onResolveEvents(): void {
-    for (const evt of this._eventsQueue) {
+    for (let i = 0; !!this._eventsQueue[i]; i++) {
+      const evt = this._eventsQueue[i];
+
       if (evt.name === events.GAME_KEYDOWN_EVENT_ID) {
         switch (evt.payload.key) {
           case 'w':

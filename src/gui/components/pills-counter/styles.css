@@ -1,5 +1,5 @@
 .game-pills-counter {
-  width: 120px;
+  width: 160px;
   height: 48px;
   
   position: absolute;
@@ -11,10 +11,11 @@
   border-radius: 8px;
   border: 4px solid rgb(204, 170, 60);
   background-color: rgb(65, 27, 16);
-  padding: 8px;
+  padding: 8px 16px;
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .game-pills-counter > *:first-child {
@@ -32,4 +33,5 @@
   font-weight: 600;
   font-size: 32px;
   line-height: 40px;
+  color: rgb(199, 231, 235);
 }

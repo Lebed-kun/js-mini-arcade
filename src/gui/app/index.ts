@@ -56,7 +56,14 @@ export class App {
   }
 
   private async _setupGui() {
-    this._gameCanvas = new GameScene(this._containerEl);
+    const bgImage = this._backgroundTile.getImage();
+    this._gameCanvas = new GameScene(
+      this._containerEl,
+      {
+        width: bgImage.naturalWidth,
+        height: bgImage.naturalHeight,
+      }
+    );
     this._gameCanvas.mount();
 
     await new Promise(
@@ -174,8 +181,8 @@ export class App {
       this._gameCanvas.getCanvas(),
       {
         image: bgImage,
-        width: bgImage.width,
-        height: bgImage.height,
+        width: bgImage.naturalWidth,
+        height: bgImage.naturalHeight,
       },
       this._spriteSetTile.getImage(),
       {

@@ -18,14 +18,14 @@ export class PillsCounter {
     counterEl.innerHTML = `
       <img class="game-pills-counter__img" src="${PillsCounterIcon}" alt="pill" />
       <div class="game-pills-counter__text">
-        x ${this._count}
+        x${this._count}
       </div>
     `;
     
     const textEl = counterEl.querySelector('.game-pills-counter__text');
     this._textEl = textEl as HTMLElement;
     this._counterEl = counterEl;
-    this._containerEl.appendChild(textEl);
+    this._containerEl.appendChild(counterEl);
   }
 
   public unmount() {
@@ -37,6 +37,6 @@ export class PillsCounter {
 
   public increaseCountBy(cnt: number) {
     this._count += cnt;
-    this._textEl.textContent = `x ${this._count}`;
+    this._textEl.textContent = `x${this._count}`;
   }
 }

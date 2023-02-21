@@ -41,8 +41,11 @@ export class GameEngine {
   }
 
   private _resumeImpl() {
-    this._resume();
-    this._resume = null;
+    if (this._resume) {
+      this._resume();
+      this._resume = null;
+    }
+
     this._waitResume = () => {
       return new Promise(
         (res) => {
@@ -56,9 +59,9 @@ export class GameEngine {
   }
 
   private _resolveEvents() {
-    while (this._gameEvents.length) {
+    // @ts-ignore
+    while (this._gameEvents.length[this._gameEvents.length - 1]) {
       const evt = this._gameEvents.pop();
-
       for (const obj of this._gameObjects) {
         if (obj.destroyed) {
           continue;
@@ -260,7 +263,6 @@ export class GameEngine {
         continue;
       }
 
-      const physObj = obj.physicalObject;
       const sprite = obj.sprite;
 
       canvasCtx.drawImage(
@@ -288,7 +290,7 @@ export class GameEngine {
     }
 
     while (
-      this._gameObjects.length
+      this._gameObjects[this._gameObjects.length - 1]
       && this._gameObjects[this._gameObjects.length - 1].destroyed
     ) {
       this._gameObjects.pop();
