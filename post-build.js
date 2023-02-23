@@ -7,7 +7,7 @@ const postBuild = async () => {
     { encoding: 'utf-8' },
   );
   await fs.writeFile(
-    path.resolve(__dirname, "dist", "styles.css"),
+    path.resolve(__dirname, "docs", "styles.css"),
     globalStylesFile,
     { encoding: 'utf-8' },
   );
@@ -19,7 +19,7 @@ const postBuild = async () => {
   );
   fontFileNames = fontFileNames.map((e) => e.name);
 
-  const outFontsDir = path.resolve(__dirname, "dist", "fonts");
+  const outFontsDir = path.resolve(__dirname, "docs", "fonts");
   await fs.mkdir(outFontsDir, { recursive: true });
 
   for (const fontFileName of fontFileNames) {
