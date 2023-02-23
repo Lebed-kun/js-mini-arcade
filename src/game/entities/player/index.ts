@@ -3,8 +3,8 @@ import { Sprite } from '@core/sprite';
 import { GRAVITY, GAME_OBJ_ID_PLAYER, GAME_OBJ_ID_PILL, GAME_OBJ_ID_ENEMY, GAME_OBJ_ID_DOOR } from '@game/consts';
 import * as events from '@core/game-event';
 
-const JUMP_VELOCITY = 60.11;
-const MOVE_VELOCITY = 20.33;
+const JUMP_VELOCITY = 25.01;
+const MOVE_VELOCITY = 5.33;
 
 interface PlayerState {
   pillsCollected: number;
@@ -65,10 +65,14 @@ export class Player extends GameObject {
       jump: false,
       damaged: false,
     };
+
+    this.subscribeEvent(events.GAME_KEYDOWN_EVENT_ID);
+    this.subscribeEvent(events.GAME_KEYUP_EVENT_ID);
+    this.subscribeEvent(events.GAME_SCENEMOUSECLICK_EVENT_ID);
   }
 
   public beforeUpdate(): void {}
-  
+
   public onResolveEvents(): void {
     for (let i = 0; !!this._eventsQueue[i]; i++) {
       const evt = this._eventsQueue[i];
@@ -76,15 +80,18 @@ export class Player extends GameObject {
       if (evt.name === events.GAME_KEYDOWN_EVENT_ID) {
         switch (evt.payload.key) {
           case 'w':
+          case 'W':
           case 'ArrowDown':
             this._state.jump = true;
             break;
           case 'a':
+          case 'A':
           case 'ArrowLeft':
             this._state.move = true;
             this._state.moveDir = 'l';
             break;
           case 'd':
+          case 'D':
           case 'ArrowRight':
             this._state.move = true;
             this._state.moveDir = 'r';
@@ -97,8 +104,10 @@ export class Player extends GameObject {
       if (evt.name === events.GAME_KEYUP_EVENT_ID) {
         switch (evt.payload.key) {
           case 'a':
+          case 'A':
           case 'ArrowLeft':
           case 'd':
+          case 'D':
           case 'ArrowRight':
             this._state.move = false;
             break;
@@ -246,7 +255,15 @@ export class Player extends GameObject {
     }
   }
 
+  private _checkJumpingCollision(): void {
+    if (!this._downCollidedObject) {
+      this._state.jump = false;
+    }
+  }
+
   public onDetectCollisions(): void {
+    this._checkJumpingCollision();
+
     this._handleEnemyCollisions();
     if (this._destroyed) {
       return;
@@ -318,7 +335,13 @@ export class Player extends GameObject {
     this._prepareSprite();
   }
   
-  public onRender(): void {}
+  public onRender(): void {
+    if (this._destroyed) {
+      this.unsubscribeEvent(events.GAME_KEYDOWN_EVENT_ID);
+      this.unsubscribeEvent(events.GAME_KEYUP_EVENT_ID);
+      this.unsubscribeEvent(events.GAME_SCENEMOUSECLICK_EVENT_ID);
+    }
+  }
 
   public afterUpdate(): void {
     this._state.attackCastedDir = null;

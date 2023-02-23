@@ -11,7 +11,7 @@ const generateWalls = (tileset: HTMLImageElement): Box[] => {
   const sprite: Sprite = {
     tileset,
     srcX: 8,
-    srcY: 130,
+    srcY: 140,
     srcWidth: 58,
     srcHeight: 58,
   };

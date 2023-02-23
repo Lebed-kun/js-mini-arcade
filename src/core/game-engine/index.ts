@@ -2,6 +2,8 @@ import { GameObject } from '@core/game-object';
 import { GameEvent, isMouseEvent } from '@core/game-event';
 import { isXYInBounds } from '@core/utils';
 import { Background } from '@core/background';
+import { COLLISION_MIN_BOUND } from '@core/consts';
+import { GAME_OBJ_ID_PLAYER } from '@/game/consts';
 
 export class GameEngine {
   private _canvas: HTMLCanvasElement;
@@ -60,7 +62,7 @@ export class GameEngine {
 
   private _resolveEvents() {
     // @ts-ignore
-    while (this._gameEvents.length[this._gameEvents.length - 1]) {
+    while (this._gameEvents[this._gameEvents.length - 1]) {
       const evt = this._gameEvents.pop();
       for (const obj of this._gameObjects) {
         if (obj.destroyed) {
@@ -105,37 +107,42 @@ export class GameEngine {
 
         const obj2Phys = obj2.physicalObject;
 
-        const dInt = (obj1Phys.y0 + obj1Phys.h) >= obj2Phys.y0;
-        const uInt = obj1Phys.y0 <= (obj2Phys.y0 + obj2Phys.h);
-        const lInt = obj1Phys.x0 <= (obj2Phys.x0 + obj2Phys.w);
-        const rInt = (obj1Phys.x0 + obj1Phys.w) >= obj2Phys.x0;
+        let dInt = (obj1Phys.y0 + obj1Phys.h) - obj2Phys.y0;
+        let uInt = (obj2Phys.y0 + obj2Phys.h) - obj1Phys.y0;
+        let lInt = (obj2Phys.x0 + obj2Phys.w) - obj1Phys.x0;
+        let rInt = (obj1Phys.x0 + obj1Phys.w) - obj2Phys.x0;
 
-        if (dInt && lInt) {
+        const hasCollision = dInt > COLLISION_MIN_BOUND &&
+          uInt > COLLISION_MIN_BOUND &&
+          lInt > COLLISION_MIN_BOUND &&
+          rInt > COLLISION_MIN_BOUND;
+
+        if (hasCollision && dInt > COLLISION_MIN_BOUND && (dInt < lInt || dInt < rInt)) {
           obj1.addCollision('down', obj2);
-          obj1.addCollision('left', obj2);
           obj2.addCollision('up', obj1);
-          obj2.addCollision('right', obj1);
+          lInt = -1.0;
+          rInt = -1.0;
         }
 
-        if (dInt && rInt) {
-          obj1.addCollision('down', obj2);
-          obj1.addCollision('right', obj2);
-          obj2.addCollision('up', obj1);
-          obj2.addCollision('left', obj1);
-        }
-
-        if (uInt && lInt) {
+        if (hasCollision && uInt > COLLISION_MIN_BOUND && (uInt < lInt || uInt < rInt)) {
           obj1.addCollision('up', obj2);
+          obj2.addCollision('down', obj1);
+          lInt = -1.0;
+          rInt = -1.0;
+        }
+
+        if (hasCollision && rInt > COLLISION_MIN_BOUND && (rInt < uInt || rInt < dInt)) {
+          obj1.addCollision('right', obj2);
+          obj2.addCollision('left', obj1);
+          uInt = -1.0;
+          dInt = -1.0;
+        }
+
+        if (hasCollision && lInt > COLLISION_MIN_BOUND && (lInt < uInt || lInt < dInt)) {
           obj1.addCollision('left', obj2);
-          obj2.addCollision('down', obj1);
           obj2.addCollision('right', obj1);
-        }
-
-        if (uInt && rInt) {
-          obj1.addCollision('up', obj2);
-          obj1.addCollision('right', obj2);
-          obj2.addCollision('down', obj1);
-          obj2.addCollision('left', obj1);
+          uInt = -1.0;
+          dInt = -1.0;
         }
       }
     }
@@ -145,7 +152,7 @@ export class GameEngine {
     if (obj.downCollision) {
       obj.physicalObject.vy = 0;
     } else {
-      obj.physicalObject.vy += obj.physicalObject.gravity * 0.67;
+      obj.physicalObject.vy += obj.physicalObject.gravity;
     }
 
     obj.physicalObject.y0 += obj.physicalObject.vy;
@@ -164,12 +171,20 @@ export class GameEngine {
   private _resolveCollisions() {
     for (const obj of this._gameObjects) {
       if (obj.destroyed) {
+        obj.clearDownCollision();
+        obj.clearUpCollision();
+        obj.clearLeftCollision();
+        obj.clearRightCollision();
         continue;
       }
 
       const physObj = obj.physicalObject;
 
       if (physObj.isStatic || physObj.isGhost) {
+        obj.clearDownCollision();
+        obj.clearUpCollision();
+        obj.clearLeftCollision();
+        obj.clearRightCollision();
         continue;
       }
 
@@ -190,9 +205,6 @@ export class GameEngine {
             downCollPhys.y0 += dY / 2;
           }
         }
-
-        obj.clearDownCollision();
-        downColl.clearUpCollision();
       }
       
       if (upColl && !upColl.destroyed) {
@@ -207,9 +219,6 @@ export class GameEngine {
             upCollPhys.y0 -= dY / 2;
           }
         }
-
-        obj.clearUpCollision();
-        upColl.clearDownCollision();
       }
 
       if (leftColl && !leftColl.destroyed) {
@@ -221,16 +230,13 @@ export class GameEngine {
             physObj.x0 += dX;
           } else {
             physObj.x0 += dX / 2;
-            leftCollPhys.y0 -= dX / 2;
+            leftCollPhys.x0 -= dX / 2;
           }
         }
-
-        obj.clearLeftCollision();
-        leftColl.clearRightCollision();
       }
 
       if (rightColl && !rightColl.destroyed) {
-        const rightCollPhys = leftColl.physicalObject;
+        const rightCollPhys = rightColl.physicalObject;
         const dX = (physObj.x0 + physObj.w) - rightCollPhys.x0;
         
         if (!rightCollPhys.isGhost) {
@@ -238,13 +244,19 @@ export class GameEngine {
             physObj.x0 -= dX;
           } else {
             physObj.x0 -= dX / 2;
-            rightCollPhys.y0 += dX / 2;
+            rightCollPhys.x0 += dX / 2;
           }
         }
-
-        obj.clearRightCollision();
-        rightColl.clearLeftCollision();
       }
+
+      obj.clearDownCollision();
+      downColl?.clearUpCollision();
+      obj.clearUpCollision();
+      upColl?.clearDownCollision();
+      obj.clearLeftCollision();
+      leftColl?.clearRightCollision();
+      obj.clearRightCollision();
+      rightColl?.clearLeftCollision();
     }
   }
 
@@ -335,11 +347,11 @@ export class GameEngine {
       obj.afterUpdate();
     }
 
-    window.requestAnimationFrame(
-      async () => {
-        await this._runIteration();
-      },
-    );
+  window.requestAnimationFrame(
+    async () => {
+      await this._runIteration();
+    },
+  );
   }
 
   public start() {

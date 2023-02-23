@@ -49,10 +49,10 @@ export abstract class GameObject {
       this._eventsQueue.push(evt);
     }
   }
-  public subscribeEvent(evtName: string) {
+  public subscribeEvent(evtName: number) {
     this._eventsSubscriptions[evtName] = true;
   }
-  public unsubscribeEvent(evtName: string) {
+  public unsubscribeEvent(evtName: number) {
     delete this._eventsSubscriptions[evtName];
   }
   public clearEvents() {

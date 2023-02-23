@@ -9,4 +9,4 @@ export const isXYInBounds = (
   const xIn = dstX >= boxX && dstX <= (boxX + boxWidth);
   const yIn = dstY >= boxY && dstY <= (boxY + boxHeight);
   return xIn && yIn;
-}
+};

@@ -1,4 +1,4 @@
-export const GRAVITY = 4.33;
+export const GRAVITY = 1.11;
 
 export const GAME_OBJ_ID_BOX = 1;
 export const GAME_OBJ_ID_PILL = 2;
