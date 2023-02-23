@@ -35,7 +35,7 @@ export class PillsCounter {
     }
   }
 
-  public increaseCountBy(cnt: number) {
+  public changeCountBy(cnt: number) {
     this._count += cnt;
     this._textEl.textContent = `x${this._count}`;
   }

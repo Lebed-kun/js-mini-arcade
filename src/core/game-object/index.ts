@@ -1,9 +1,11 @@
 import { PhysicalObject } from '@core/physical-object';
 import { Sprite } from '@core/sprite';
 import { GameEvent, GameEventsSubscriptions } from '@core/game-event';
+import { GameEngine } from '@core/game-engine';
 
 export abstract class GameObject {
   protected readonly _protoId: number;
+  protected _boundedScene: GameEngine;
   protected _physicalObj: PhysicalObject;
   protected _sprite: Sprite;
 
@@ -42,6 +44,10 @@ export abstract class GameObject {
   }
   public get sprite(): Sprite {
     return this._sprite;
+  }
+
+  public bindScene(scene: GameEngine) {
+    this._boundedScene = scene;
   }
 
   public fireEvent(evt: GameEvent) {

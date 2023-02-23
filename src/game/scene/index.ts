@@ -33,7 +33,7 @@ const generateWalls = (tileset: HTMLImageElement): Box[] => {
   }
 
   x = 451.0;
-  y = 131.0;
+  y = 110.0;
   for (let i = 0; i < 4; i++) {
     res.push(
       new Box(
@@ -127,7 +127,7 @@ const generatePills = (tileset: HTMLImageElement): Pill[] => {
   }
 
   x = 465.0;
-  y = 77.0;
+  y = 56.0;
   for (let i = 0; i < 2; i++) {
     const color = (Math.random() * 3) ^ 0;
     let sprite = pinkPillSprite;
@@ -249,12 +249,12 @@ const placeEnemies = (tileset: HTMLImageElement): Enemy[] => {
     new Enemy(
       spriteSet,
       560.0,
-      26.0,
+      6.0,
     ),
     new Enemy(
       spriteSet,
-      -30.0,
-      12.0,
+      6.0,
+      -40.0,
     ),
   ];
 

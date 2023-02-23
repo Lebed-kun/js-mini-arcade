@@ -117,15 +117,18 @@ export class App {
   }
 
   private _onPillCollect(cnt: number) {
-    this._pillsCounter.increaseCountBy(cnt);
+    this._pillsCounter.changeCountBy(cnt);
   }
 
   private _onCanvasClick(e: MouseEvent) {
+    const canvas = this._gameCanvas.getCanvas();
+    const { top, left } = canvas.getBoundingClientRect();
+
     this._scene.fireEvent({
       name: GAME_SCENEMOUSECLICK_EVENT_ID,
       payload: {
-        x: e.clientX,
-        y: e.clientY,
+        x: e.clientX - left,
+        y: e.clientY - top,
       },
     });
   }

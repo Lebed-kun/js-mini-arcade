@@ -3,7 +3,6 @@ import { GameEvent, isMouseEvent } from '@core/game-event';
 import { isXYInBounds } from '@core/utils';
 import { Background } from '@core/background';
 import { COLLISION_MIN_BOUND } from '@core/consts';
-import { GAME_OBJ_ID_PLAYER } from '@/game/consts';
 
 export class GameEngine {
   private _canvas: HTMLCanvasElement;
@@ -12,6 +11,12 @@ export class GameEngine {
   private _gameEvents: GameEvent[];
   private _waitResume: () => Promise<void>;
   private _resume: () => void;
+
+  private _bindScene(objs: GameObject[]) {
+    for (const obj of objs) {
+      obj.bindScene(this);
+    }
+  }
 
   constructor(canvas: HTMLCanvasElement, background: Background, objects: GameObject[]) {
     this._canvas = canvas;
@@ -26,6 +31,11 @@ export class GameEngine {
         },
       );
     };
+    this._bindScene(this._gameObjects);
+  }
+
+  public get canvas(): HTMLCanvasElement {
+    return this._canvas;
   }
 
   public fireEvent(evt: GameEvent) {
@@ -152,6 +162,10 @@ export class GameEngine {
     if (obj.downCollision) {
       obj.physicalObject.vy = 0;
     } else {
+      if (obj.upCollision) {
+        obj.physicalObject.vy = 0;
+      }
+
       obj.physicalObject.vy += obj.physicalObject.gravity;
     }
 

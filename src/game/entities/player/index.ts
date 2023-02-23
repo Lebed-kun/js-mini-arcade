@@ -5,12 +5,14 @@ import * as events from '@core/game-event';
 
 const JUMP_VELOCITY = 25.01;
 const MOVE_VELOCITY = 5.33;
+const ATTACK_STATE_DEADLINE_MS = 500;
 
 interface PlayerState {
   pillsCollected: number;
   move: boolean;
   moveDir: 'l' | 'r';
   attackCastedDir: 'l' | 'r' | null;
+  attackCastedAtMs: number;
   jump: boolean;
   damaged: boolean;
 }
@@ -62,6 +64,7 @@ export class Player extends GameObject {
       move: false,
       moveDir: 'l',
       attackCastedDir: null,
+      attackCastedAtMs: -1,
       jump: false,
       damaged: false,
     };
@@ -122,6 +125,7 @@ export class Player extends GameObject {
 
         if (cY >= y0 && cY <= (y0 + h)) {
           this._state.attackCastedDir = this._state.moveDir;
+          this._state.attackCastedAtMs = Date.now();
         }
         
         continue;
@@ -131,7 +135,9 @@ export class Player extends GameObject {
 
   private _handleDamage(): void {
     if (this._state.pillsCollected > 0) {
+      const prevPills = this._state.pillsCollected;
       this._state.pillsCollected = 0;
+      this._options.onPillCollect(-prevPills);
     } else {
       this._destroyed = true;
     }
@@ -209,21 +215,25 @@ export class Player extends GameObject {
     const upColl = this._upCollidedObject;
     if (upColl?.protoId === GAME_OBJ_ID_PILL) {
       this._handlePillCollision(upColl);
+      upColl.destroy();
     }
 
     const downColl = this._downCollidedObject;
     if (downColl?.protoId === GAME_OBJ_ID_PILL) {
       this._handlePillCollision(downColl);
+      downColl.destroy();
     }
 
     const leftColl = this._leftCollidedObject;
     if (leftColl?.protoId === GAME_OBJ_ID_PILL) {
       this._handlePillCollision(leftColl);
+      leftColl.destroy();
     }
 
     const rightColl = this._rightCollidedObject;
     if (rightColl?.protoId === GAME_OBJ_ID_PILL) {
       this._handlePillCollision(rightColl);
+      rightColl.destroy();
     }
   }
 
@@ -282,6 +292,15 @@ export class Player extends GameObject {
   }
 
   private _handleMove(): void {
+    const canvas = this._boundedScene.canvas;
+    const { x0, w } = this._physicalObj;
+    if (x0 < 0 && this._state.moveDir === 'l') {
+      return;
+    }
+    if (x0 > (canvas.width - w) && this._state.moveDir === 'r') {
+      return;
+    }
+
     if (this._state.move) {
       if (this._state.moveDir === 'l') {
         this._physicalObj.vx = -MOVE_VELOCITY;
@@ -307,23 +326,16 @@ export class Player extends GameObject {
   private _prepareSprite(): void {
     if (this._state.attackCastedDir === 'l') {
       this._sprite = this._sprites.attackLeft;
-      return;
-    }
-
-    if (this._state.attackCastedDir === 'r') {
+    } else if (this._state.attackCastedDir === 'r') {
       this._sprite = this._sprites.attackRight;
-      return;
-    }
-
-    if (this._state.moveDir === 'l') {
+    } else if (this._state.moveDir === 'l') {
       this._sprite = this._sprites.moveLeft;
-      return;
+    } else if (this._state.moveDir === 'r') {
+      this._sprite = this._sprites.moveRight;
     }
 
-    if (this._state.moveDir === 'r') {
-      this._sprite = this._sprites.moveRight;
-      return;
-    }
+    this._physicalObj.w = this._sprite.srcWidth;
+    this._physicalObj.h = this._sprite.srcHeight;
   }
   
   public onResolveCollisions(): void {
@@ -344,7 +356,13 @@ export class Player extends GameObject {
   }
 
   public afterUpdate(): void {
-    this._state.attackCastedDir = null;
+    const now = Date.now();
+    const attackCastedAt = this._state.attackCastedAtMs;
+    if (attackCastedAt >= 0 && (now - attackCastedAt) > ATTACK_STATE_DEADLINE_MS) {
+      this._state.attackCastedDir = null;
+      this._state.attackCastedAtMs = -1;
+    }
+
     this._state.jump = false;
   }
 }

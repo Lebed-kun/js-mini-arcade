@@ -2,12 +2,14 @@ import { GameObject } from '@core/game-object';
 import { Sprite } from '@core/sprite';
 import { GRAVITY, GAME_OBJ_ID_ENEMY } from '@game/consts';
 
-const RESTORE_JUMP_VELOCITY = 10.33;
-const MOVE_VELOCITY = 10.33;
+const RESTORE_JUMP_VELOCITY = 1.2;
+const MOVE_VELOCITY = 1.67;
+const TWEAK_DEADLINE_MS = 500;
 
 interface EnemyState {
   direction: number;
   tweaked: boolean; 
+  tweakedAt: number;
 }
 
 export interface EnemySprites {
@@ -45,6 +47,7 @@ export class Enemy extends GameObject {
     this._state = {
       direction: 1,
       tweaked: false,
+      tweakedAt: -1,
     };
   }
   
@@ -57,8 +60,17 @@ export class Enemy extends GameObject {
       return;
     }
 
-    if (this._physicalObj.vy > 0) {
-      this._physicalObj.vy -= RESTORE_JUMP_VELOCITY;
+    const canvas = this._boundedScene.canvas;
+    const { x0, w } = this._physicalObj;
+    if (x0 < 0 && this._state.direction === -1) {
+      this._state.direction = -this._state.direction;
+    }
+    if (x0 > (canvas.width - w) && this._state.direction === 1) {
+      this._state.direction = -this._state.direction;
+    }
+
+    if (this._physicalObj.vy > 0.5) {
+      this._physicalObj.vy = -RESTORE_JUMP_VELOCITY;
       this._physicalObj.y0 += this._physicalObj.vy;
       this._state.direction = -this._state.direction;
     }
@@ -72,7 +84,13 @@ export class Enemy extends GameObject {
     if (this._destroyed) {
       return;
     }
-    this._state.tweaked = !this._state.tweaked;
+
+    const now = Date.now();
+    const tweakedAt = this._state.tweakedAt;
+    if (tweakedAt < 0 || (now - tweakedAt) > TWEAK_DEADLINE_MS) {
+      this._state.tweaked = !this._state.tweaked;
+      this._state.tweakedAt = Date.now();
+    }
 
     if (this._state.direction === -1) {
       if (this._state.tweaked) {
