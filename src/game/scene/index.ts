@@ -319,8 +319,8 @@ const placeDoor = (tileset: HTMLImageElement): Door => {
 
   return new Door(
     sprite,
-    0.0,
-    10.0,
+    20.0,
+    6.0,
   );
 };
 

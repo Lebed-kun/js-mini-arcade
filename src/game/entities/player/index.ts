@@ -6,6 +6,7 @@ import * as events from '@core/game-event';
 const JUMP_VELOCITY = 25.01;
 const MOVE_VELOCITY = 5.33;
 const ATTACK_STATE_DEADLINE_MS = 500;
+const DAMAGE_DEADLINE_MS = 1000;
 
 interface PlayerState {
   pillsCollected: number;
@@ -15,6 +16,7 @@ interface PlayerState {
   attackCastedAtMs: number;
   jump: boolean;
   damaged: boolean;
+  damagedAt: number;
 }
 
 export interface PlayerSprites {
@@ -67,6 +69,7 @@ export class Player extends GameObject {
       attackCastedAtMs: -1,
       jump: false,
       damaged: false,
+      damagedAt: -1,
     };
 
     this.subscribeEvent(events.GAME_KEYDOWN_EVENT_ID);
@@ -134,6 +137,12 @@ export class Player extends GameObject {
   }
 
   private _handleDamage(): void {
+    const now = Date.now();
+    const damagedAt = this._state.damagedAt;
+    if (damagedAt >= 0 && (now - damagedAt) < DAMAGE_DEADLINE_MS) {
+      return;
+    }
+
     if (this._state.pillsCollected > 0) {
       const prevPills = this._state.pillsCollected;
       this._state.pillsCollected = 0;
@@ -143,6 +152,7 @@ export class Player extends GameObject {
     }
 
     this._state.damaged = true;
+    this._state.damagedAt = Date.now();
   }
 
   private _handleEnemyCollision(enemy: GameObject): void {
@@ -238,7 +248,7 @@ export class Player extends GameObject {
   }
 
   private _handleDoorCollision(_door: GameObject): void {
-    if (this._state.pillsCollected === this._options.requiredPills) {
+    if (this._state.pillsCollected >= this._options.requiredPills) {
       this._options.onDoorHit();
     }
   }

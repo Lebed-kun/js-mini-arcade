@@ -230,21 +230,21 @@ export class App {
     );
     this._loader.mount();
     this._backgroundTile = await this._loadTile(GameBackgroundTile);
-
-    this._loader.updateText('Loading sprite set...');
+    
+    this._loader?.updateText('Loading sprite set...');
     this._spriteSetTile = await this._loadTile(GameTileset);
 
-    this._loader.updateText('Setup GUI...');
+    this._loader?.updateText('Setup GUI...');
     await this._setupGui();
 
-    this._loader.updateText('Setup game scene...');
+    this._loader?.updateText('Setup game scene...');
     await this._setupScene();
 
-    this._loader.unmount();
+    this._loader?.unmount();
     this._loader = null;
   }
 
-  public async unmount() {
+  public unmount() {
     this._cleanupGlobalEventHandlers();
 
     if (this._loader) {
