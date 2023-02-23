@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --devtool false && node post-build.js",
     "dev-server": "webpack-dev-server"
   },
   "author": "",

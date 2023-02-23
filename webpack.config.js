@@ -18,13 +18,15 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.ts$/,
-        use: 'ts-loader',
+        test: /\.ts$/i,
+        use: {
+          loader: 'ts-loader',
+        },
         exclude: /node_modules/,
       },
 
       {
-        test: /\.js$/,
+        test: /\.js$/i,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -36,19 +38,18 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
+        test: /\.css$/i,
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader"
         ],
       },
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-          },
-        ],
+        test: /\.(png|jpe?g|gif|svg|ttf|otf|woff|woff2)$/i,
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets',
+        },
       },
     ]
   },
