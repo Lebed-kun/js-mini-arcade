@@ -84,7 +84,7 @@ export class App {
     this._scene.pause();
 
     const continueFn = () => {
-      window.open('https://gitlab.com/jbyte777/liberty-pharm-events-distributor', '_blank');
+      window.open('https://gitlab.com/jbyte777/prompt-ql', '_blank');
     };
     this._winPopup = new ContinuePopup(
       this._containerEl,
