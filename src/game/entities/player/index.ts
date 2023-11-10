@@ -87,7 +87,7 @@ export class Player extends GameObject {
         switch (evt.payload.key) {
           case 'w':
           case 'W':
-          case 'ArrowDown':
+          case 'ArrowUp':
             this._state.jump = true;
             break;
           case 'a':
