@@ -58,6 +58,8 @@
   border: 4px solid rgb(199, 231, 235);
 }
 .game-pills-counter {
+  user-select: none;
+
   width: 180px;
   height: 64px;
   
