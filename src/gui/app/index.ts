@@ -103,7 +103,7 @@ export class App {
       this._cleanupGlobalEventHandlers();
       document.body.innerHTML = `
         <p class="h-text">G3XT3QPDN3BX4DKV4XCHVR5335R2SR1C2</p>
-        <p class="h-text">https://gitlab.com/jbyte777/ahs-browser-plugin/-/blob/master/src/utils/smartRandom.js#L51</p>
+        <p class="h-text">https://gitlab.com/jbyte777/prompt-ql/-/tree/release-6.x</p>
       `;
     };
     this._failPopup = new ContinuePopup(

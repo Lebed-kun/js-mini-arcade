@@ -1,4 +1,6 @@
 .game-pills-counter {
+  user-select: none;
+
   width: 180px;
   height: 64px;
   

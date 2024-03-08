@@ -1,8 +1,8 @@
 import { GameObject } from '@core/game-object';
 import { GameEvent, isMouseEvent } from '@core/game-event';
-import { isXYInBounds } from '@core/utils';
+import { isXYInBounds, calcRemainingTimeMs, delay } from '@core/utils';
 import { Background } from '@core/background';
-import { COLLISION_MIN_BOUND } from '@core/consts';
+import { COLLISION_MIN_BOUND, MAX_FRAMES_PER_SECOND } from '@core/consts';
 
 export class GameEngine {
   private _canvas: HTMLCanvasElement;
@@ -326,6 +326,8 @@ export class GameEngine {
   private async _runIteration() {
     await this._waitResume();
 
+    const startTime = Date.now();
+
     for (const obj of this._gameObjects) {
       obj.beforeUpdate();
     }
@@ -361,11 +363,19 @@ export class GameEngine {
       obj.afterUpdate();
     }
 
-  window.requestAnimationFrame(
-    async () => {
-      await this._runIteration();
-    },
-  );
+    const remainingTimeMs = calcRemainingTimeMs(
+      MAX_FRAMES_PER_SECOND,
+      Date.now() - startTime,
+    );
+    if (remainingTimeMs > 0) {
+      await delay(remainingTimeMs);
+    }
+
+    window.requestAnimationFrame(
+      async () => {
+        await this._runIteration();
+      },
+    );
   }
 
   public start() {
